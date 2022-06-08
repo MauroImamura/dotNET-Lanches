@@ -2,19 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NET_Lanches.Models;
+using NET_Lanches.Context;
 
 #nullable disable
 
 namespace NET_Lanches.Migrations
 {
-    [DbContext(typeof(Contexto))]
-    [Migration("20220605060730_Inicial-criacao")]
-    partial class Inicialcriacao
+    [DbContext(typeof(AppDbContext))]
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,14 +30,18 @@ namespace NET_Lanches.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoriaId"), 1L, 1);
 
                     b.Property<string>("CategoriaNome")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Descricao")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("CategoriaId");
 
-                    b.ToTable("Categoria");
+                    b.ToTable("Categorias");
                 });
 
             modelBuilder.Entity("NET_Lanches.Models.Lanche", b =>
@@ -54,10 +56,14 @@ namespace NET_Lanches.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DescricaoCurta")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("DescricaoDetalhada")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("EmEstoque")
                         .HasColumnType("bit");
@@ -72,16 +78,18 @@ namespace NET_Lanches.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LancheNome")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
 
-                    b.Property<string>("Preco")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Preco")
+                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("LancheId");
 
                     b.HasIndex("CategoriaId");
 
-                    b.ToTable("Lanche");
+                    b.ToTable("Lanches");
                 });
 
             modelBuilder.Entity("NET_Lanches.Models.Lanche", b =>

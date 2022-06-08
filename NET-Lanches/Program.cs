@@ -1,12 +1,12 @@
-using NET_Lanches.Models;
 using Microsoft.EntityFrameworkCore;
+using NET_Lanches.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<Contexto>
+builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer("Data Source=Computer02;Initial Catalog=LanchesDb;Integrated Security=True"));
 
 var app = builder.Build();
