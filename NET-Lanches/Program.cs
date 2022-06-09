@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NET_Lanches.Context;
+using NET_Lanches.Repositories;
+using NET_Lanches.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,9 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>
     (options => options.UseSqlServer("Data Source=Computer02;Initial Catalog=LanchesDb;Integrated Security=True"));
+
+builder.Services.AddTransient<ILancheRepository, LancheRepository>();
+builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 
 var app = builder.Build();
 
