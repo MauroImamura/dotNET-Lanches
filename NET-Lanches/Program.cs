@@ -4,6 +4,7 @@ using NET_Lanches.Context;
 using NET_Lanches.Models;
 using NET_Lanches.Repositories;
 using NET_Lanches.Repositories.Interfaces;
+using NET_Lanches.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,9 +28,19 @@ builder.Services.Configure<IdentityOptions>(options =>
         options.Password.RequiredUniqueChars = 1;
     });
 
+builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("Admin",
+            politica =>
+            {
+                politica.RequireRole("Admin");
+            });
+    });
+
 builder.Services.AddTransient<ILancheRepository, LancheRepository>();
 builder.Services.AddTransient<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddTransient<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
 builder.Services.AddMemoryCache();
@@ -50,6 +61,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+CriarPerfisUsuarios(app);
+
 app.UseSession();
 
 app.UseAuthentication();
@@ -64,4 +77,23 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}"
+    );
+});
+
 app.Run();
+
+void CriarPerfisUsuarios(WebApplication app)
+{
+    var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+    using (var scope = scopedFactory.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
+        service.SeedUsers();
+        service.SeedRoles();
+    }
+}
